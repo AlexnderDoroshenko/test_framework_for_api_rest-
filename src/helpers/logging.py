@@ -21,5 +21,3 @@ class Logger:
         self.basic(level=level_str)
         return self
 
-
-

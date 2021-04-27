@@ -5,7 +5,7 @@ import requests
 class Users:
     def __init__(self):
         self.config = Config()
-        self.api_url = self.config.get(['api']['url'])
+        self.api_url = self.config.get_config_value('api','url')  # Or you can take it from settings.BASE_URL
         self.logger = Logger().set_log_level("DEBUG")
         self.request = requests.request
 

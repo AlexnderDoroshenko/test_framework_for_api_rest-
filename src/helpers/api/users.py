@@ -1,59 +1,63 @@
 from src.helpers.configurator import Config
 from src.helpers.logging import Logger
 import requests
+import json
+import settings
 
 class Users:
     def __init__(self):
         self.config = Config()
-        self.api_url = self.config.get_config_value('api','url')  # Or you can take it from settings.BASE_URL
+        # self.api_url = self.config.get_config_value('api','url')  # Or you can take it from settings.BASE_URL
+        self.api_url = settings.BASE_URL
         self.logger = Logger().set_log_level("DEBUG")
-        self.request = requests.request
+        self.request = requests
+        self.token = f"Bearer {self.config.get_config_value('test', 'api_token')}"
+        self.header = {"Authorization": self.token,
+                       "COntent-Type": "application/json"}
+        self.verify = True
 
     def get_user(self, user_id: int):
         try:
-            self.request(method="GET",
-                         url=f"{self.api_url}/{user_id}")
+            return self.request.get(url=f"{self.api_url}/{user_id}", verify=self.verify)
         except Exception as e:
             self.logger.log.debug("Exception occurs", exc_info=True)
 
-    def put_user(self, user_id: int):
+    def put_user(self, user_id: int, body: dict):
         try:
-            self.request(method="PUT",
-                         url=f"{self.api_url}/{user_id}")
+            return self.request.put(url=f"{self.api_url}/{user_id}", data=json.dumps(body),
+                             headers=self.header, verify=self.verify)
         except Exception as e:
             self.logger.log.debug("Exception occurs", exc_info=True)
 
-    def patch_user(self, user_id: int):
+    def patch_user(self, user_id: int, body: dict):
         try:
-            self.request(method="PATCH",
-                         url=f"{self.api_url}/{user_id}")
+            return self.request.patch(url=f"{self.api_url}/{user_id}", data=json.dumps(body),
+                             headers=self.header, verify=self.verify)
         except Exception as e:
             self.logger.log.debug("Exception occurs", exc_info=True)
 
     def delete_user(self, user_id: int):
         try:
-            self.request(method="DELETE",
-                         url=f"{self.api_url}/{user_id}")
+            return self.request.delete(url=f"{self.api_url}/{user_id}", headers=self.header, verify=self.verify)
         except Exception as e:
             self.logger.log.debug("Exception occurs", exc_info=True)
 
-    def post_user(self):
+    def post_user(self, body: dict):
         try:
-            self.request(method="POST",
-                         url=self.api_url)
+            return self.request.post(url=self.api_url, data=json.dumps(body), headers=self.header, verify=self.verify)
         except Exception as e:
-            self.logger.log.debug("Exception occurs", exc_info=True)
+            print(f"Error :{e}")
+            # self.logger.log.debug("Exception occurs", exc_info=True)
 
     def options_user(self, user_id: int):
         try:
-            self.request(method="OPTIONS",
-                         url=self.api_url)
+            return self.request.options(url=self.api_url)
         except Exception as e:
             self.logger.log.debug("Exception occurs", exc_info=True)
 
     def head_user(self, user_id: int):
         try:
-            self.request(method="HEAD",
+            return self.request.head(
                          url=self.api_url)
         except Exception as e:
             self.logger.log.debug("Exception occurs", exc_info=True)
